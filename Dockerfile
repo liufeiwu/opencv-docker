@@ -2,19 +2,13 @@ FROM ubuntu:18.04
 
 ENV OPENCV_VERSION=4.3.0
 
+# Install opencv dependencies
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
-    software-properties-common \
     wget \
     unzip \
     curl \
-    ca-certificates
-    #bzip2 \
-    #grep sed dpkg 
-
-# Install opencv dependencies
-RUN cd ~
-RUN apt-get update && apt-get install -y \
+    ca-certificates \
     build-essential \
     cmake \
     git \
@@ -31,11 +25,7 @@ RUN add-apt-repository "deb http://security.ubuntu.com/ubuntu xenial-security ma
     libdc1394-22-dev \
     libxine2-dev \
     libv4l-dev
-
-RUN cd /usr/include/linux
-RUN ln -s -f ../libv4l1-videodev.h videodev.h
-RUN cd ~
-RUN apt-get install -y \
+RUN cd /usr/include/linux && ln -s -f ../libv4l1-videodev.h videodev.h && cd ~ && apt-get install -y \
     libgtk2.0-dev libtbb-dev qt5-default \
     libatlas-base-dev \
     libfaac-dev \
@@ -47,7 +37,9 @@ RUN apt-get install -y \
     libopencore-amrwb-dev \
     libavresample-dev \
     x264 \
-    v4l-utils
+    v4l-utils \
+    libwebp-dev \
+    tesseract-ocr libtesseract-dev libleptonica-dev
 
 # Setup OpenCV source
 RUN wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip && \
@@ -80,4 +72,4 @@ RUN cd opencv && mkdir build && cd build && \
     -D BUILD_opencv_js=OFF \
     -D WITH_GSTREAMER=OFF \ 
     -D OPENCV_ENABLE_NONFREE=ON \
-    .. && make -j4 && make install && ldconfig
+    .. && make -j2 && make install && ldconfig
