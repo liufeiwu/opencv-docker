@@ -1,0 +1,23 @@
+FROM feiwu/opencv
+
+ENV ASPNETCORE_URLS=http://*:80
+WORKDIR /app
+
+# Update packages
+RUN apt-get update && \
+ apt-get -y install wget
+
+# Add microsoft source
+RUN wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
+  dpkg -i packages-microsoft-prod.deb && \
+  rm -f packages-microsoft-prod.deb
+
+# Install .net runtime
+RUN add-apt-repository universe && \
+  apt-get update && \
+  apt-get -y install apt-transport-https && \
+  apt-get update && \
+  apt-get -y install aspnetcore-runtime-3.1
+
+# tzdate
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
